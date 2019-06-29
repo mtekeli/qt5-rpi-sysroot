@@ -50,3 +50,21 @@ RUN cd ${RPI_DIR} \
 	&& wget https://raw.githubusercontent.com/Kukkimonsuta/rpi-buildqt/master/scripts/utils/sysroot-relativelinks.py \
 	&& chmod +x sysroot-relativelinks.py \
 	&& python ./sysroot-relativelinks.py ${SYS_ROOT}
+
+FROM ubuntu:18.04
+
+ARG RPI_DIR
+ARG SYS_ROOT
+
+RUN mkdir -p ${RPI_DIR} 
+
+# copy the repository form the previous image
+COPY --from=intermediate ${SYS_ROOT} ${SYS_ROOT}
+
+RUN apt-get update && \
+	apt-get install -y \
+	build-essential \
+	ssh \
+	rsync \
+	&& apt-get clean \
+	&& rm -rf /var/lib/apt/lists/*
